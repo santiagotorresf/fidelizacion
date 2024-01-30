@@ -1,0 +1,141 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+    template="/WEB-INF/template.xhtml">
+                    
+    <ui:define name="title">Concesionarios</ui:define>
+    <ui:define name="head">
+        <style>
+            .table-demo .customers-table-header {
+                display: -ms-flexbox;
+                display: flex;
+                -ms-flex-align: center;
+                align-items: center;
+                -ms-flex-pack: justify;
+                justify-content: space-between;
+                -ms-flex-wrap: wrap;
+                flex-wrap: wrap;
+            }
+        </style>
+    </ui:define>
+    <ui:define name="content">
+        <h:form id="form">
+            <p:growl id="growl" life="3000" showDetail="true"/>
+            <div class="p-col-12">
+                <div class="card">
+                    <h4>Creación de Concesionarios</h4>
+                    <p:outputPanel id="concesionario">
+                        <div class="ui-fluid p-formgrid p-grid">
+                            <div class="p-field p-col-12">
+                                <p:outputLabel for="tipoConcesionario" value="Tipo" />
+                                <p:selectOneMenu id="tipoConcesionario" value="#{concesionariosBean.concesionario.tipoConcesionario}" converter="#{tiposConcesionariosConverter}" label="Tipo" style="width: 100%" required="true">
+                                    <f:selectItem itemLabel="Seleccionar" itemValue="#{null}" noSelectionOption="true"/>
+                                    <f:selectItems value="#{concesionariosBean.tiposConcesionarios}" var="tipoConcesionario" itemLabel="#{tipoConcesionario.descripcion}" itemValue="#{tipoConcesionario}"/>
+                                </p:selectOneMenu>
+                            </div>
+                            <div class="p-field p-col-12">
+                                <p:outputLabel for="identificacion" value="Identificación" />
+                                <div class="p-field">
+                                    <div class="ui-inputgroup">
+                                        <p:inputText id="identificacion" value="#{concesionariosBean.concesionario.identificacion}" style="text-transform: uppercase;" required="true" maxlength="13">
+                                            <p:keyFilter for="identificacion" mask="num" />
+                                        </p:inputText>
+                                        <p:commandButton id="busqueda" action="#{concesionariosBean.validateIdentificacion}" icon="pi pi-search"  process="@this,identificacion" update="identificacion,growl"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-field p-col-12">
+                                <p:outputLabel for="razonSocial" value="Razón Social" />
+                                <p:inputText id="razonSocial" value="#{concesionariosBean.concesionario.razonSocial}" label="Razón Social" style="text-transform: uppercase;" required="true" maxlength="100"/>
+                            </div>
+                            <div class="p-field p-col-12">
+                                <p:outputLabel for="representanteLegal" value="Representante Legal" />
+                                <p:inputText id="representanteLegal" value="#{concesionariosBean.concesionario.representanteLegal}" label="Representante Legal" style="text-transform: uppercase;"  maxlength="60"/>
+                            </div>
+                            <div class="p-field p-col-12">
+                                <div class="p-field">
+                                    <p:outputLabel for="telefono" value="Teléfono" />
+                                    <p:inputMask id="telefono" value="#{concesionariosBean.concesionario.telefono}" mask="+999 99 999 9999" validateMask="true" />
+                                </div>
+                            </div>
+                            <div class="p-field p-col-12">
+                                <div class="p-field">
+                                    <p:outputLabel for="email" value="Email" />
+                                    <p:inputText id="email" value="#{concesionariosBean.concesionario.email}"  style="text-transform: lowercase;" />
+                                </div>
+                            </div>
+                            <div class="p-field p-col-12">
+                                <p:outputLabel for="status" value="Estado" />
+                                <p:selectOneMenu id="status" value="#{concesionariosBean.concesionario.status}" label=" Estado" required="true">
+                                    <f:selectItem itemLabel="Seleccionar" itemValue="#{null}" noSelectionOption="true"/>
+                                    <f:selectItem itemValue="A" itemLabel="Activo" />
+                                    <f:selectItem itemValue="D" itemLabel="Inactivo" />
+                                </p:selectOneMenu>
+                            </div>
+                            <div class="p-col-12">
+                                <p:commandButton id="actionGrabar" value="Grabar" action="#{concesionariosBean.save}" rendered="#{not concesionariosBean.editar}" process="@this,concesionario" update="concesionario,concesionarios,growl" icon="pi pi-check" style="width:auto;"/>
+                                <p:commandButton id="actionEditar" value="Editar" action="#{concesionariosBean.edit}" rendered="#{concesionariosBean.editar}" process="@this,concesionario" update="concesionario,concesionarios,growl" icon="pi pi-refresh" style="width:auto;"/>
+                            </div>
+                        </div>
+                    </p:outputPanel>
+                    <p:spacer height="10" />
+                    <div class="p-grid table-demo">
+                        <div class="p-col-12">
+                            <div class="card">
+                                <p:dataTable id="concesionarios" value="#{concesionariosBean.concesionarios}" var="concesionario" 
+                                             widgetVar="concesionariosTable" filteredValue="#{concesionariosBean.concesionariosFiltered}" 
+                                             selectionMode="single" selection="#{concesionariosBean.concesionario}" rowKey="#{concesionario.id}"
+                                             reflow="true" paginator="true" rows="5" paginatorPosition="bottom"
+                                             resizableColumns="true" resizeMode="expand" draggableColumns="true">
+                                    <p:ajax event="rowSelect" listener="#{concesionariosBean.onRowSelect}" update=":form:concesionario" />
+                                    <p:ajax event="rowUnselect" listener="#{concesionariosBean.onRowUnselect}" update=":form:concesionario" />
+                                    <f:facet name="header">
+                                        <div class="customers-table-header">
+                                            <span style="font-weight: bold">LISTADO DE LOCALES COMERCIALES</span>
+                                            <span class="ui-input-icon-left filter-container">
+                                                <i class="pi pi-search"></i>
+                                                <p:inputText id="globalFilter" onkeyup="PF('concesionariosTable').filter()" placeholder="Búsqueda por Razón Social" style="width:350px; text-transform: uppercase;"/>
+                                            </span>
+                                        </div>
+                                        <p:spacer height="10" />
+                                        <div style="text-align: right;">
+                                            <p:commandButton id="toggler" type="button" value="Mostrar u ocultar columnas" icon="pi pi-align-justify"/>
+                                            <p:columnToggler datasource="concesionarios" trigger="toggler"/>
+                                        </div>
+                                    </f:facet>
+                                    <p:column headerText="Código" sortBy="#{concesionario.id}">
+                                        <h:outputText value="#{concesionario.id}" />
+                                    </p:column>
+                                    <p:column headerText="Tipo" sortBy="#{concesionario.tipoConcesionario.descripcion}">
+                                        <h:outputText value="#{concesionario.tipoConcesionario.descripcion}" />
+                                    </p:column>
+                                    <p:column headerText="Identificación" sortBy="#{concesionario.identificacion}">
+                                        <h:outputText value="#{concesionario.identificacion}" />
+                                    </p:column>
+                                    <p:column headerText="Razón Social" sortBy="#{concesionario.razonSocial}" filterBy="#{concesionario.razonSocial}" filterStyle="display:none" style="width: 25%;">
+                                        <h:outputText value="#{concesionario.razonSocial}" />
+                                    </p:column>
+                                    <p:column headerText="Representante Legal" sortBy="#{concesionario.representanteLegal}" style="width: 20%;">
+                                        <h:outputText value="#{concesionario.representanteLegal}" />
+                                    </p:column>
+                                    <p:column headerText="Teléfono" sortBy="#{concesionario.telefono}">
+                                        <h:outputText value="#{concesionario.telefono}" />
+                                    </p:column>
+                                    <p:column headerText="Email" sortBy="#{concesionario.email}">
+                                        <h:outputText value="#{concesionario.email}" />
+                                    </p:column>
+                                    <p:column headerText="Estado" sortBy="#{concesionario.status}">
+                                        <h:outputText value="#{concesionario.status eq 'A' ? 'Activo': 'Inactivo'}" />
+                                    </p:column>
+                                </p:dataTable>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+    </ui:define>
+    
+</ui:composition>

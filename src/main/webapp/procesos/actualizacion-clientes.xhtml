@@ -1,0 +1,63 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+             
+    <ui:define name="title">Actualización de Clientes</ui:define>
+    <ui:define name="content">
+        <h:form id="form">
+            <p:growl id="growl" life="3000" showDetail="true"/>
+            <div class="p-grid ui-fluid">
+                <div class="p-col-12">
+                    <div class="card">
+                        <h4>Actualización de Clientes</h4>
+                        <div class="ui-fluid p-formgrid p-grid">
+                            <div class="p-field p-col-12">
+                                <p:outputLabel for="cedula" value="Cédula" />
+                                <div class="p-field">
+                                    <div class="ui-inputgroup">
+                                        <p:inputText id="cedula" value="#{actualizacionDatosBean.cliente.identificacion}" required="true">
+                                            <p:keyFilter mask="num" />
+                                        </p:inputText>
+                                        <p:commandButton id="busqueda" action="#{actualizacionDatosBean.searchByCedula}" icon="pi pi-search"  process="@this,cedula" update="@form"/>
+                                        <p:tooltip for="busqueda" value="Búsqueda de cliente" position="top"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-field p-col-12">
+                                <div class="p-field">
+                                    <p:outputLabel for="razonSocial" value="Razón Social" />
+                                    <p:inputText id="razonSocial" value="#{actualizacionDatosBean.cliente.razonSocial}" style="text-transform: uppercase;" required="true" />
+                                </div>
+                            </div>
+                            <div class="p-field p-col-12">
+                                <div class="p-field">
+                                    <p:outputLabel for="direccion" value="Dirección" />
+                                    <p:inputText id="direccion" value="#{actualizacionDatosBean.cliente.direccion}" style="text-transform: uppercase;" required="true" />
+                                </div>
+                            </div>
+                            <div class="p-field p-col-12">
+                                <div class="p-field">
+                                    <p:outputLabel for="email" value="Email" />
+                                    <p:inputText id="email" value="#{actualizacionDatosBean.cliente.email}"  style="text-transform: lowercase;" required="true" />
+                                </div>
+                            </div>
+                            <div class="p-field p-col-12">
+                                <div class="p-field">
+                                    <p:outputLabel for="telefono" value="Teléfono" />
+                                    <p:inputMask id="telefono" value="#{actualizacionDatosBean.cliente.telefono}" mask="+999 99 999 9999" validateMask="true" required="true" />
+                                </div>
+                            </div>
+                            <div class="p-col-12">
+                                <p:commandButton value="Actualizar" action="#{actualizacionDatosBean.updateCliente}" update="@form" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

@@ -1,0 +1,87 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+                    
+    <ui:define name="title">Tipos de Locales Comerciales</ui:define>
+    <ui:define name="head">
+        <style>
+            .table-demo .customers-table-header {
+                display: -ms-flexbox;
+                display: flex;
+                -ms-flex-align: center;
+                align-items: center;
+                -ms-flex-pack: justify;
+                justify-content: space-between;
+                -ms-flex-wrap: wrap;
+                flex-wrap: wrap;
+            }
+        </style>
+    </ui:define>
+    <ui:define name="content">
+        <h:form id="form">
+            <p:growl id="growl" life="3000" showDetail="true"/>
+            <div class="p-col-12">
+                <div class="card">
+                    <h4>Creacion de Tipo de Locales</h4>
+                    <p:outputPanel id="tipoLocal">
+                        <div class="ui-fluid p-formgrid p-grid">
+                            <div class="p-field p-col-12">
+                                <p:outputLabel for="descripcion" value="Descripción" />
+                                <p:inputText id="descripcion" value="#{tiposLocalesBean.tipoLocal.descripcion}" label="Descripción" style="text-transform: uppercase;" required="true" />
+                            </div>
+                            <div class="p-field p-col-12">
+                                <p:outputLabel for="status" value="Estado" />
+                                <p:selectOneMenu id="status" value="#{tiposLocalesBean.tipoLocal.status}" label=" Estado" required="true">
+                                    <f:selectItem itemLabel="Seleccionar" itemValue="#{null}" noSelectionOption="true"/>
+                                    <f:selectItem itemValue="A" itemLabel="Activo" />
+                                    <f:selectItem itemValue="D" itemLabel="Inactivo" />
+                                </p:selectOneMenu>
+                            </div>
+                            <div class="p-col-12">
+                                <p:commandButton id="actionGrabar" value="Grabar" action="#{tiposLocalesBean.save}" rendered="#{not tiposLocalesBean.editar}" process="@this,tipoLocal" update="tipoLocal,tiposLocales,growl" icon="pi pi-check" style="width:auto;"/>
+                                <p:commandButton id="actionEditar" value="Editar" action="#{tiposLocalesBean.edit}" rendered="#{tiposLocalesBean.editar}" process="@this,tipoLocal" update="tipoLocal,tiposLocales,growl" icon="pi pi-refresh" style="width:auto;"/>
+                            </div>
+                        </div>
+                    </p:outputPanel>
+                    <p:spacer height="10" />
+                    <div class="p-grid table-demo">
+                        <div class="p-col-12">
+                            <div class="card">
+                                <p:dataTable id="tiposLocales" value="#{tiposLocalesBean.tiposLocales}" var="tipoLocal" 
+                                            widgetVar="tiposLocalesTable" filteredValue="#{tiposLocalesBean.tiposLocalesFiltered}" 
+                                            selectionMode="single" selection="#{tiposLocalesBean.tipoLocal}" rowKey="#{tipoLocal.id}"
+                                            reflow="true" paginator="true" rows="5" paginatorPosition="bottom">
+                                    <p:ajax event="rowSelect" listener="#{tiposLocalesBean.onRowSelect}" update=":form:tipoLocal" />
+                                    <p:ajax event="rowUnselect" listener="#{tiposLocalesBean.onRowUnselect}" update=":form:tipoLocal" />
+                                    <f:facet name="header">
+                                        <div class="customers-table-header">
+                                            <span style="font-weight: bold">LISTADO DE TIPOS DE LOCALES</span>
+                                            <span class="ui-input-icon-left filter-container">
+                                                <i class="pi pi-search"></i>
+                                                <p:inputText id="globalFilter" onkeyup="PF('tiposLocalesTable').filter()" placeholder="Búsqueda por Descripción" style="width:350px; text-transform: uppercase;"/>
+                                            </span>
+                                        </div>
+                                    </f:facet>
+                                    <p:column headerText="Código" sortBy="#{tipoLocal.id}">
+                                        <h:outputText value="#{tipoLocal.id}" />
+                                    </p:column>
+                                    <p:column headerText="Descripción" sortBy="#{tipoLocal.descripcion}" filterBy="#{tipoLocal.descripcion}" filterStyle="display:none">
+                                        <h:outputText value="#{tipoLocal.descripcion}" />
+                                    </p:column>
+                                    <p:column headerText="Estado" sortBy="#{tipoLocal.status}">
+                                        <h:outputText value="#{tipoLocal.status eq 'A' ? 'Activo': 'Inactivo'}" />
+                                    </p:column>
+                                </p:dataTable>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+    </ui:define>
+    
+</ui:composition>
+

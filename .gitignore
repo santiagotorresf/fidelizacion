@@ -1,0 +1,7 @@
+/target/
+faces-config.NavData
+nb-configuration.xml
+pom.xml
+/src/test/
+/src/main/resources/
+/src/main/webapp/resources/

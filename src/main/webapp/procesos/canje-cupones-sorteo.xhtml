@@ -1,0 +1,249 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+                    
+    <ui:define name="title">Canje de cupones de locales comerciales</ui:define>
+    <ui:define name="head">
+        <style>
+            .table-demo .customers-table-header {
+                display: -ms-flexbox;
+                display: flex;
+                -ms-flex-align: center;
+                align-items: center;
+                -ms-flex-pack: justify;
+                justify-content: space-between;
+                -ms-flex-wrap: wrap;
+                flex-wrap: wrap;
+            }
+        </style>
+    </ui:define>
+    <ui:define name="content">
+        <h:form id="form">
+            <p:growl id="growl" life="3000" showDetail="true"/>
+            <div class="p-col-12">
+                <div class="card">
+                    <h4>Ingreso de facturas de clientes</h4>
+                    <p:outputPanel id="cliente">
+                        <div class="ui-fluid p-formgrid p-grid">
+                            <div class="p-field p-col-12">
+                                <p:outputLabel for="identificacion" value="Cédula" />
+                                <div class="ui-inputgroup">
+                                    <p:inputText id="identificacion" value="#{canjesCuponesSorteoBean.venta.cliente.identificacion}" label="Cédula">
+                                        <p:keyFilter for="identificacion" mask="num" />
+                                    </p:inputText>
+                                    <p:commandButton id="busqueda" action="#{canjesCuponesSorteoBean.searchClienteByCedula}" icon="pi pi-search" process="@this,identificacion" update="cliente,growl,toolbar" />
+                                    <p:tooltip for="busqueda" value="Búsqueda de cliente" position="top"/>
+                                    <p:commandButton id="agregar" process="@this,clienteDialogo" icon="pi pi-plus" styleClass="secondary-button" onclick="PF('clienteDialog').show()" />
+                                    <p:tooltip for="agregar" value="Crear cliente" position="top"/>
+                                    <p:commandButton id="editar" process="@this,clienteEditDialogo" icon="pi pi-user-edit" styleClass="warning-button" onclick="PF('clienteEditDialog').show()" />
+                                    <p:tooltip for="editar" value="Editar cliente" position="top"/>
+                                </div>
+                            </div>
+                            <div class="p-field p-col-12 p-md-6">
+                                <p:outputLabel for="razonSocial" value="Razón Social" />
+                                <p:inputText id="razonSocial" value="#{canjesCuponesSorteoBean.venta.cliente.razonSocial}" label="Razón Social" style="text-transform: uppercase;" disabled="true"/>
+                            </div>
+                            <div class="p-field p-col-12 p-md-3">
+                                <p:outputLabel for="telefono" value="Teléfono" />
+                                <p:inputText id="telefono" value="#{canjesCuponesSorteoBean.venta.cliente.telefono}" label="Teléfono" disabled="true"/>
+                            </div>
+                            <div class="p-field p-col-12 p-md-3">
+                                <p:outputLabel for="email" value="Email" />
+                                <p:inputText id="email" value="#{canjesCuponesSorteoBean.venta.cliente.email}" label="Email" disabled="true"/>
+                            </div>
+                        </div>
+                    </p:outputPanel>
+                    <p:spacer height="10" />
+                    <div class="p-grid table-demo">
+                        <div class="p-col-12">
+                            <div class="card">
+                                <p:toolbar id="toolbar">
+                                    <p:toolbarGroup>
+                                        <p:commandButton id="add-facturas-button" process="@this,facturaDialogo" icon="pi pi-plus" onclick="PF('facturaDialog').show()"
+                                                         styleClass="ui-button-success" style="margin-right: .3rem" disabled="#{not canjesCuponesSorteoBean.ingresarFacturas}" />
+                                        <p:tooltip for="add-facturas-button" value="Agregar detalle" position="top"/>
+                                        <p:commandButton id="delete-facturas-button" actionListener="#{canjesCuponesSorteoBean.eliminarFacturas}"
+                                                         disabled="#{not canjesCuponesSorteoBean.eliminarDetalle}" icon="pi pi-trash" 
+                                                         process="@this" update="@this,facturas,toolbar" style="margin-right: .3rem" />
+                                        <p:tooltip for="delete-facturas-button" value="Eliminar detalle" position="top"/>
+                                        <p:commandButton id="save-beneficio-button" actionListener="#{canjesCuponesSorteoBean.grabarBeneficio}"
+                                                         process="@this,facturas" update="cliente,toolbar,facturas,growl" disabled="#{not canjesCuponesSorteoBean.grabarBeneficio}" 
+                                                         icon="pi pi-save" style="margin-right: .3rem" />
+                                        <p:tooltip for="save-beneficio-button" value="Grabar facturas" position="top"/>
+                                        <p:commandButton id="print-cupones-button" process="@this,facturas" update="impresionDialog"
+                                                         oncomplete="PF('impresionDialog').show()" disabled="#{not canjesCuponesSorteoBean.imprimirCupones}" icon="pi pi-print" />
+                                        <p:tooltip for="print-cupones-button" value="Imprimir cupones" position="top"/>
+                                    </p:toolbarGroup>
+                                </p:toolbar>
+                                <p:spacer height="5" />
+                                <p:dataTable id="facturas" value="#{canjesCuponesSorteoBean.venta.detalles}" var="detalle" 
+                                             widgetVar="facturasTable" 
+                                             selectionMode="single" selection="#{canjesCuponesSorteoBean.detalleSelected}" rowKey="#{detalle.local.id}"
+                                             reflow="true" paginator="true" rows="5" paginatorPosition="bottom"
+                                             styleClass="products-table">
+
+                                    <p:ajax event="rowSelect" listener="#{canjesCuponesSorteoBean.onRowSelect}" update=":form:toolbar" />
+                                    <p:ajax event="rowUnselect" listener="#{canjesCuponesSorteoBean.onRowUnselect}" update=":form:toolbar" />
+                                    <f:facet name="header">
+                                        <span style="font-weight: bold">Detalle de compras realizadas</span>
+                                    </f:facet>
+                                    <p:column headerText="Local Comercial" sortBy="#{detalle.local.nombreComercial}" style="width: 30%;">
+                                        <h:outputText value="#{detalle.local.nombreComercial}" />
+                                    </p:column>
+                                    <p:column headerText="Fecha de emision">
+                                        <h:outputText value="#{detalle.fechaEmision}">
+                                            <f:convertDateTime type="localDate" pattern="dd/MM/yyyy" />
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column headerText="Establecimiento" style="width: 10%">
+                                        <h:outputText value="#{detalle.establecimiento}" />
+                                    </p:column>
+                                    <p:column headerText="Punto de emisión">
+                                        <h:outputText value="#{detalle.puntoEmision}" />
+                                    </p:column>
+                                    <p:column headerText="Secuencial">
+                                        <h:outputText value="#{detalle.secuencial}" />
+                                    </p:column>
+                                    <p:column headerText="Total">
+                                        <h:outputText value="#{detalle.total}" >
+                                           <f:convertNumber currencySymbol="$" type="currency" /> 
+                                        </h:outputText>
+                                    </p:column>
+                                </p:dataTable>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p:dialog id="clienteDialogo" header="Creación de Cliente" width="450" showEffect="fade" modal="true" widgetVar="clienteDialog" responsive="true">
+                <p:outputPanel id="nuevoCliente" class="ui-fluid">
+                    <div class="p-field">
+                        <p:outputLabel for="identificacionNuevoCliente" value="Identificación" />
+                        <div class="ui-inputgroup">
+                            <p:inputText id="identificacionNuevoCliente" value="#{canjesCuponesSorteoBean.venta.cliente.identificacion}" required="true" maxlength="13">
+                                <p:keyFilter for="identificacionNuevoCliente" mask="num" />
+                            </p:inputText>
+                            <p:commandButton id="busquedaNuevoCliente" action="#{canjesCuponesSorteoBean.validateIdentificacion}" icon="pi pi-search"  process="@this,identificacionNuevoCliente" update="identificacionNuevoCliente,growl"/>
+                        </div>
+                    </div>
+                    <div class="p-field">
+                        <p:outputLabel for="razonSocialNuevoCliente" value="Razón Social" />
+                        <p:inputText id="razonSocialNuevoCliente" value="#{canjesCuponesSorteoBean.venta.cliente.razonSocial}" label="Razón Social" style="text-transform: uppercase;" required="true" maxlength="100"/>
+                    </div>
+                    <div class="p-field">
+                        <p:outputLabel for="telefonoNuevoCliente" value="Teléfono" />
+                        <p:inputMask id="telefonoNuevoCliente" value="#{canjesCuponesSorteoBean.venta.cliente.telefono}" mask="+999 99 999 9999" validateMask="true" required="true" />
+                    </div>
+                    <div class="p-field">
+                        <p:outputLabel for="emailNuevoCliente" value="Email" />
+                        <p:inputText id="emailNuevoCliente" value="#{canjesCuponesSorteoBean.venta.cliente.email}"  style="text-transform: lowercase;" required="true" />
+                    </div>
+                </p:outputPanel>
+                <f:facet name="footer">
+                    <p:commandButton value="Grabar" icon="pi pi-check" action="#{canjesCuponesSorteoBean.agregarCliente}" process="@this,nuevoCliente" update="nuevoCliente,growl" />
+                    <p:commandButton value="Salir" icon="pi pi-times" onclick="PF('clienteDialog').hide()" class="secondary-button" />
+                </f:facet>
+            </p:dialog>
+            
+            <p:dialog id="clienteEditDialogo" header="Edición de Cliente Existente" width="450" showEffect="fade" modal="true" widgetVar="clienteEditDialog" responsive="true">
+                <p:outputPanel id="clienteExistente" class="ui-fluid">
+                    <div class="p-field">
+                        <p:outputLabel for="identificacionClienteExistente" value="Identificación" />
+                        <div class="ui-inputgroup">
+                            <p:inputText id="identificacionClienteExistente" value="#{canjesCuponesSorteoBean.identificacionClienteExistente}" maxlength="13">
+                                <p:keyFilter for="identificacionClienteExistente" mask="num" />
+                            </p:inputText>
+                            <p:commandButton id="busquedaClienteExistente" action="#{canjesCuponesSorteoBean.searchClienteExistente}" icon="pi pi-search"  process="@this,identificacionClienteExistente" update="clienteExistente,editarClienteExistente,growl"/>
+                        </div>
+                    </div>
+                    <div class="p-field">
+                        <p:outputLabel for="razonSocialClienteExistente" value="Razón Social" />
+                        <p:inputText id="razonSocialClienteExistente" value="#{canjesCuponesSorteoBean.clientePorEditar.razonSocial}" label="Razón Social" style="text-transform: uppercase;" maxlength="100"/>
+                    </div>
+                    <div class="p-field">
+                        <p:outputLabel for="telefonoClienteExistente" value="Teléfono" />
+                        <p:inputMask id="telefonoClienteExistente" value="#{canjesCuponesSorteoBean.clientePorEditar.telefono}" mask="+999 99 999 9999" validateMask="true" />
+                    </div>
+                    <div class="p-field">
+                        <p:outputLabel for="emailClienteExistente" value="Email" />
+                        <p:inputText id="emailClienteExistente" value="#{canjesCuponesSorteoBean.clientePorEditar.email}" style="text-transform: lowercase;"  />
+                    </div>
+                </p:outputPanel>
+                <f:facet name="footer">
+                    <p:commandButton id="editarClienteExistente" value="Editar" icon="pi pi-check" action="#{canjesCuponesSorteoBean.actualizarClienteExistente}" disabled="#{canjesCuponesSorteoBean.deshabilitarEdicionClientes}" process="@this,clienteExistente" update="clienteExistente,growl" />
+                    <p:commandButton value="Salir" icon="pi pi-times" onclick="PF('clienteEditDialog').hide()" class="secondary-button" />
+                </f:facet>
+            </p:dialog>
+            
+            <p:dialog id="facturaDialogo" header="Ingreso de factura" width="55%" showEffect="fade" modal="true" widgetVar="facturaDialog" responsive="true">
+                <p:outputPanel id="factura" class="ui-fluid">
+                    <div class="ui-fluid p-formgrid p-grid">
+                        <div class="p-field p-col-12 p-md-9">
+                            <p:outputLabel for="local" value="Local comercial" />
+                            <p:autoComplete id="local" value="#{canjesCuponesSorteoBean.detalle.local}" placeholder="Seleccione"
+                                            dropdown="true" completeMethod="#{canjesCuponesSorteoBean.autoCompleteLocalesComerciales}" var="local" 
+                                            itemLabel="#{local.nombreComercial}" itemValue="#{local}"
+                                            converter="#{localesComercialesConverter}" scrollHeight="250" forceSelection="true" label="Concesionario" 
+                                            minQueryLength="3" inputStyle="text-transform:uppercase;" required="true"/>
+                        </div>
+                        <div class="p-field p-col-12 p-md-3">
+                            <p:outputLabel for="fechaFactura" value="Fecha" />
+                            <p:calendar id="fechaFactura" value="#{canjesCuponesSorteoBean.detalle.fechaEmision}" 
+                                        mindate="#{canjesCuponesSorteoBean.fechaMinimaFacturas}" maxdate="#{canjesCuponesSorteoBean.fechaMaximaFacturas}"
+                                        pattern="dd/MM/yyyy" label="Fecha" locale="es" 
+                                        navigator="true" showOn="button" required="true">
+                                <f:convertDateTime type="localDate" pattern="dd/MM/yyyy" />
+                            </p:calendar>
+                        </div>
+                        <div class="p-field p-col-12 p-md-3">
+                            <p:outputLabel for="establecimientoFactura" value="Establecimiento" />
+                            <p:inputText id="establecimientoFactura" value="#{canjesCuponesSorteoBean.detalle.establecimiento}" label="Establecimiento" maxlength="3" required="true">
+                                <p:keyFilter mask="num" />
+                                <p:ajax event="blur" listener="#{canjesCuponesSorteoBean.blurEstablecimientoFactura}" process="@this" update="@this"/>
+                            </p:inputText> 
+                        </div>
+                        <div class="p-field p-col-12 p-md-3">
+                            <p:outputLabel for="puntoEmisionFactura" value="Punto de emisión" />
+                            <p:inputText id="puntoEmisionFactura" value="#{canjesCuponesSorteoBean.detalle.puntoEmision}" label="Punto de emisión" maxlength="3" required="true">
+                                <p:keyFilter mask="num" />
+                                <p:ajax event="blur" listener="#{canjesCuponesSorteoBean.blurPuntoEmisionFactura}" process="@this" update="@this"/>
+                            </p:inputText> 
+                        </div>
+                        <div class="p-field p-col-12 p-md-6">
+                            <p:outputLabel for="secuencialFactura" value="Secuencial" />
+                            <p:inputText id="secuencialFactura" value="#{canjesCuponesSorteoBean.detalle.secuencial}" label="Secuencial" maxlength="9" required="true">
+                                <p:keyFilter mask="num" />
+                                <p:ajax event="blur" listener="#{canjesCuponesSorteoBean.blurSecuencialFactura}" process="@this" update="@this"/>
+                            </p:inputText> 
+                        </div>
+                            <div class="p-field p-col-12">
+                                <p:outputLabel for="totalFactura" value="Total" />
+                                <p:inputNumber id="totalFactura" value="#{canjesCuponesSorteoBean.detalle.total}" decimalPlaces="2" minValue="0" symbol="$" required="true">
+                                    <p:keyFilter mask="num" />
+                                </p:inputNumber>
+                            </div>
+                    </div>
+                </p:outputPanel>
+                <f:facet name="footer">
+                    <p:commandButton id="submitValidarFactura" value="Validar" icon="pi pi-search-plus" action="#{canjesCuponesSorteoBean.validateIngresoFactura}" process="@this,factura" update="@this,submitAgregarFactura,factura,facturas,growl" disabled="#{canjesCuponesSorteoBean.activarSubmitAgregarDetalleFactura}"/>
+                    <p:commandButton id="submitAgregarFactura" value="Agregar" icon="pi pi-check" action="#{canjesCuponesSorteoBean.ingresoFacturas}" process="@this,factura" update="@this,submitValidarFactura,factura,facturas,toolbar,growl" oncomplete="PF('facturaDialog').hide()" disabled="#{not canjesCuponesSorteoBean.activarSubmitAgregarDetalleFactura}" />
+                    <p:commandButton id="submitSalirFactura" value="Salir" icon="pi pi-times" onclick="PF('facturaDialog').hide()" class="secondary-button" />
+                </f:facet>
+            </p:dialog>
+            <p:dialog header="Cupones" id="impresionDialog" widgetVar="impresionDialog" modal="true" responsive="true" showEffect="fade" hideEffect="fade" closable="false">
+                <p:media value="#{mediaCuponesSorteoVehiculoBean.report}" width="100%" height="300px" player="pdf">
+                    <f:param name="beneficio" value="#{canjesCuponesSorteoBean.venta.id}"/>
+                </p:media>
+                <f:facet name="footer">
+                    <p:commandButton value="Cerrar" action="#{canjesCuponesSorteoBean.closePopup}" styleClass="primary-button text-button" oncomplete="PF('impresionDialog').hide()" process="@this,impresionDialog" update="@form">
+                        <p:ajax update="cliente" resetValues="true"/>
+                    </p:commandButton>
+                </f:facet>
+            </p:dialog>
+        </h:form>
+    </ui:define>
+    
+</ui:composition>

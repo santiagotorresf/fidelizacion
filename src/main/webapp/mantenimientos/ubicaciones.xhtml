@@ -1,0 +1,87 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+                    
+    <ui:define name="title">Ubicaciones del Centro Comercial</ui:define>
+    <ui:define name="head">
+        <style>
+            .table-demo .customers-table-header {
+                display: -ms-flexbox;
+                display: flex;
+                -ms-flex-align: center;
+                align-items: center;
+                -ms-flex-pack: justify;
+                justify-content: space-between;
+                -ms-flex-wrap: wrap;
+                flex-wrap: wrap;
+            }
+        </style>
+    </ui:define>
+    <ui:define name="content">
+        <h:form id="form">
+            <p:growl id="growl" life="3000" showDetail="true"/>
+            <div class="p-col-12">
+                <div class="card">
+                    <h4>Creacion de Ubicación del Centro Comercial</h4>
+                    <p:outputPanel id="ubicacion">
+                        <div class="ui-fluid p-formgrid p-grid">
+                            <div class="p-field p-col-12">
+                                <p:outputLabel for="descripcion" value="Descripción" />
+                                <p:inputText id="descripcion" value="#{ubicacionesBean.ubicacion.descripcion}" label="Descripción" style="text-transform: uppercase;" required="true" />
+                            </div>
+                            <div class="p-field p-col-12">
+                                <p:outputLabel for="status" value="Estado" />
+                                <p:selectOneMenu id="status" value="#{ubicacionesBean.ubicacion.status}" label=" Estado" required="true">
+                                    <f:selectItem itemLabel="Seleccionar" itemValue="#{null}" noSelectionOption="true"/>
+                                    <f:selectItem itemValue="A" itemLabel="Activo" />
+                                    <f:selectItem itemValue="D" itemLabel="Inactivo" />
+                                </p:selectOneMenu>
+                            </div>
+                            <div class="p-col-12">
+                                <p:commandButton id="actionGrabar" value="Grabar" action="#{ubicacionesBean.save}" rendered="#{not ubicacionesBean.editar}" process="@this,ubicacion" update="ubicacion,ubicaciones,growl" icon="pi pi-check" style="width:auto;"/>
+                                <p:commandButton id="actionEditar" value="Editar" action="#{ubicacionesBean.edit}" rendered="#{ubicacionesBean.editar}" process="@this,ubicacion" update="ubicacion,ubicaciones,growl" icon="pi pi-refresh" style="width:auto;"/>
+                            </div>
+                        </div>
+                    </p:outputPanel>
+                    <p:spacer height="10" />
+                    <div class="p-grid table-demo">
+                        <div class="p-col-12">
+                            <div class="card">
+                                <p:dataTable id="ubicaciones" value="#{ubicacionesBean.ubicaciones}" var="ubicacion" 
+                                            widgetVar="ubicacionesTable" filteredValue="#{ubicacionesBean.ubicacionesFiltered}" 
+                                            selectionMode="single" selection="#{ubicacionesBean.ubicacion}" rowKey="#{ubicacion.id}"
+                                            reflow="true" paginator="true" rows="5" paginatorPosition="bottom">
+                                    <p:ajax event="rowSelect" listener="#{ubicacionesBean.onRowSelect}" update=":form:ubicacion" />
+                                    <p:ajax event="rowUnselect" listener="#{ubicacionesBean.onRowUnselect}" update=":form:ubicacion" />
+                                    <f:facet name="header">
+                                        <div class="customers-table-header">
+                                            <span style="font-weight: bold">LISTADO UBICACIONES DEL CENTTRO COMERCIAL</span>
+                                            <span class="ui-input-icon-left filter-container">
+                                                <i class="pi pi-search"></i>
+                                                <p:inputText id="globalFilter" onkeyup="PF('ubicacionesTable').filter()" placeholder="Búsqueda por Descripción" style="width:350px; text-transform: uppercase;"/>
+                                            </span>
+                                        </div>
+                                    </f:facet>
+                                    <p:column headerText="Código" sortBy="#{ubicacion.id}">
+                                        <h:outputText value="#{ubicacion.id}" />
+                                    </p:column>
+                                    <p:column headerText="Descripción" sortBy="#{ubicacion.descripcion}" filterBy="#{ubicacion.descripcion}" filterStyle="display:none">
+                                        <h:outputText value="#{ubicacion.descripcion}" />
+                                    </p:column>
+                                    <p:column headerText="Estado" sortBy="#{ubicacion.status}">
+                                        <h:outputText value="#{ubicacion.status eq 'A' ? 'Activo': 'Inactivo'}" />
+                                    </p:column>
+                                </p:dataTable>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+    </ui:define>
+    
+</ui:composition>
+

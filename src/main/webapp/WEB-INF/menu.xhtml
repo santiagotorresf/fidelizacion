@@ -1,0 +1,40 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" 
+                xmlns:h="http://xmlns.jcp.org/jsf/html" 
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets" 
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:fr="http://primefaces.org/freya"
+                xmlns:jsf="http://xmlns.jcp.org/jsf">
+
+<div class="menu-wrapper">
+    <div class="sidebar-logo">
+        <p:link outcome="/dashboard">
+            <p:graphicImage name="images/logo-ttg-single.png" library="freya-layout" />
+        </p:link>
+        <a href="#" class="sidebar-pin" title="Toggle Menu">
+            <span class="pin"></span>
+        </a>
+    </div>
+    <div class="layout-menu-container">
+        <h:form id="menuform">
+            <fr:menu widgetVar="FreyaMenuWidget">
+                <p:menuitem id="om_dashboard" value="Dashboard" icon="pi pi-home" outcome="/dashboard" />
+                <p:submenu id="om_mantenimientos" label="Mantenimientos" icon="pi pi-briefcase">
+                    <p:menuitem id="om_tipos-clientes" value="Tipos de Clientes" icon="pi pi-user-plus" outcome="/mantenimientos/tipos-clientes" />
+                    <p:menuitem id="om_tipos-locales" value="Tipos de Locales" icon="pi pi-user-plus" outcome="/mantenimientos/tipos-locales" />
+                    <p:menuitem id="om_tipos-negocios" value="Tipos de Negocios" icon="pi pi-user-plus" outcome="/mantenimientos/tipos-negocios" />
+                    <p:menuitem id="om_ubicaciones" value="Ubicaciones" icon="pi pi-user-plus" outcome="/mantenimientos/ubicaciones" />
+                    <p:menuitem id="om_concesionarios" value="Concesionarios" icon="pi pi-user-plus" outcome="/mantenimientos/concesionarios" />
+                    <p:menuitem id="om_locales-comerciales" value="Locales Comerciales" icon="pi pi-user-plus" outcome="/mantenimientos/locales-comerciales" />
+                </p:submenu>
+                <p:submenu id="om_procesos" label="Procesos" icon="pi pi-th-large">
+                    <p:menuitem id="om_actualizacion-clientes" value="Actualización de Clientes" icon="pi pi-user-plus" outcome="/procesos/actualizacion-clientes" />
+                    <p:menuitem id="om_canje-cupones" value="Canje de Cupones" icon="pi pi-copy" outcome="/procesos/canje-cupones" />
+                    <p:menuitem id="om_canje-cupones-sorteo" value="Sorteo de Vehiculo" icon="pi pi-copy" outcome="/procesos/canje-cupones-sorteo" />
+                </p:submenu>
+            </fr:menu>
+        </h:form>
+    </div>
+</div>
+
+</ui:composition>

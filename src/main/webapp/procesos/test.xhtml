@@ -1,0 +1,125 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+    template="/WEB-INF/template.xhtml">
+                    
+    <ui:define name="title">Canje de cupones de locales comerciales</ui:define>
+    <ui:define name="head">
+        <style>
+            .table-demo .customers-table-header {
+                display: -ms-flexbox;
+                display: flex;
+                -ms-flex-align: center;
+                align-items: center;
+                -ms-flex-pack: justify;
+                justify-content: space-between;
+                -ms-flex-wrap: wrap;
+                flex-wrap: wrap;
+            }
+        </style>
+    </ui:define>
+    <ui:define name="content">
+        <h:form id="form">
+            <p:growl id="growl" life="3000" showDetail="true"/>
+            <div class="p-col-12">
+                <div class="card">
+                    <h4>Ingreso de facturas de clientes</h4>
+                    <p:outputPanel id="busquedaCliente">
+                        <div class="ui-fluid p-formgrid p-grid">
+                            <div class="p-field p-col-12">
+                                <p:outputLabel for="identificacion" value="Cédula" />
+                                <div class="ui-inputgroup">
+                                    <p:inputText id="identificacion" value="#{testBean.cliente.identificacion}" label="Cédula">
+                                        <p:keyFilter for="identificacion" mask="num" />
+                                    </p:inputText>
+                                    <p:commandButton id="busqueda" action="#{testBean.searchClienteByCedula}" icon="pi pi-search" process="@this,identificacion" update="busquedaCliente,growl" />
+                                    <p:tooltip for="busqueda" value="Búsqueda de cliente" position="top"/>
+                                    <p:button id="agregar" icon="pi pi-plus" styleClass="secondary-button" onclick="PF('creacionClienteDialog').show()" />
+                                    <p:tooltip for="agregar" value="Crear cliente" position="top"/>
+                                    <p:button id="editar" icon="pi pi-user-edit" styleClass="warning-button" onclick="PF('edicionClienteDialog').show()" />
+                                    <p:tooltip for="editar" value="Editar cliente" position="top"/>
+                                </div>
+                            </div>
+                            <div class="p-field p-col-12 p-md-6">
+                                <p:outputLabel for="razonSocial" value="Razón Social" />
+                                <p:inputText id="razonSocial" value="#{testBean.cliente.razonSocial}" label="Razón Social" style="text-transform: uppercase;" disabled="true"/>
+                            </div>
+                            <div class="p-field p-col-12 p-md-3">
+                                <p:outputLabel for="telefono" value="Teléfono" />
+                                <p:inputText id="telefono" value="#{testBean.cliente.telefono}" label="Teléfono" disabled="true"/>
+                            </div>
+                            <div class="p-field p-col-12 p-md-3">
+                                <p:outputLabel for="email" value="Email" />
+                                <p:inputText id="email" value="#{testBean.cliente.email}" label="Email" disabled="true"/>
+                            </div>
+                        </div>
+                    </p:outputPanel>
+                </div>
+            </div>
+            <p:dialog header="Creación de cliente" width="450" showEffect="fade" modal="true" widgetVar="creacionClienteDialog" responsive="true">
+                <p:outputPanel id="nuevoCliente" class="ui-fluid">
+                    <div class="p-field">
+                        <p:outputLabel for="identificacionNuevoCliente" value="Identificación" />
+                        <div class="ui-inputgroup">
+                            <p:inputText id="identificacionNuevoCliente" value="#{testBean.cliente.identificacion}" required="true" maxlength="13">
+                                <p:keyFilter for="identificacionNuevoCliente" mask="num" />
+                            </p:inputText>
+                            <p:commandButton id="busquedaNuevoCliente" action="#{testBean.validateIdentificacion}" icon="pi pi-search"  process="@this,identificacionNuevoCliente" update="identificacionNuevoCliente,growl"/>
+                        </div>
+                    </div>
+                    <div class="p-field">
+                        <p:outputLabel for="razonSocialNuevoCliente" value="Razón Social" />
+                        <p:inputText id="razonSocialNuevoCliente" value="#{testBean.cliente.razonSocial}" label="Razón Social" style="text-transform: uppercase;" required="true" maxlength="100"/>
+                    </div>
+                    <div class="p-field">
+                        <p:outputLabel for="telefonoNuevoCliente" value="Teléfono" />
+                        <p:inputMask id="telefonoNuevoCliente" value="#{testBean.cliente.telefono}" mask="+999 99 999 9999" validateMask="true" required="true" />
+                    </div>
+                    <div class="p-field">
+                        <p:outputLabel for="emailNuevoCliente" value="Email" />
+                        <p:inputText id="emailNuevoCliente" value="#{testBean.cliente.email}"  style="text-transform: lowercase;" required="true" />
+                    </div>
+                </p:outputPanel>
+                <f:facet name="footer">
+                    <p:commandButton value="Grabar" icon="pi pi-check" action="#{testBean.agregarNuevoCliente}" process="@this,nuevoCliente" update="nuevoCliente,busquedaCliente,growl" />
+                    <p:commandButton value="Salir" icon="pi pi-times" onclick="PF('creacionClienteDialog').hide()" class="secondary-button" />
+                </f:facet>
+            </p:dialog>
+            <p:dialog header="Edición de cliente existente" width="450" showEffect="fade" modal="true" widgetVar="edicionClienteDialog" responsive="true">
+                <p:outputPanel id="clienteExistente" class="ui-fluid">
+                    <div class="p-field">
+                        <p:outputLabel for="identificacionClienteExistente" value="Identificación" />
+                        <div class="ui-inputgroup">
+                            <p:inputText id="identificacionClienteExistente" value="#{testBean.cliente.identificacion}" maxlength="13">
+                                <p:keyFilter for="identificacionClienteExistente" mask="num" />
+                            </p:inputText>
+                            <p:commandButton id="busquedaClienteExistente" icon="pi pi-search">
+                                <p:ajax listener="#{testBean.buscarClienteExistente}" process="@this,identificacionClienteExistente" update="clienteExistente,buttonEditarClienteExistente" />
+                            </p:commandButton>
+                        </div>
+                    </div>
+                    <div class="p-field">
+                        <p:outputLabel for="razonSocialClienteExistente" value="Razón Social" />
+                        <p:inputText id="razonSocialClienteExistente" value="#{testBean.cliente.razonSocial}" label="Razón Social" style="text-transform: uppercase;" maxlength="100"/>
+                    </div>
+                    <div class="p-field">
+                        <p:outputLabel for="telefonoClienteExistente" value="Teléfono" />
+                        <p:inputMask id="telefonoClienteExistente" value="#{testBean.cliente.telefono}" mask="+999 99 999 9999" validateMask="true" />
+                    </div>
+                    <div class="p-field">
+                        <p:outputLabel for="emailClienteExistente" value="Email" />
+                        <p:inputText id="emailClienteExistente" value="#{testBean.cliente.email}" style="text-transform: lowercase;"  />
+                    </div>
+                </p:outputPanel>
+                <f:facet name="footer">
+                    <p:commandButton id="buttonEditarClienteExistente" value="Editar" icon="pi pi-check" action="#{testBean.editarClienteExistente}" disabled="#{empty testBean.cliente.razonSocial}" process="@this,clienteExistente" update="clienteExistente,busquedaCliente,growl" />
+                    <p:commandButton value="Salir" icon="pi pi-times" onclick="PF('edicionClienteDialog').hide()" class="secondary-button" />
+                </f:facet>
+            </p:dialog>
+        </h:form>
+    </ui:define>
+    
+</ui:composition>
+

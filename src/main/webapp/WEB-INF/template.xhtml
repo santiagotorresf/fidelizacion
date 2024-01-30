@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      lang="en">
+
+    <f:view locale="#{localizacionBean.locale}">
+        <h:head>
+            <f:facet name="first">
+                <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+                <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+                <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+                <meta name="apple-mobile-web-app-capable" content="yes" />
+                <link rel="icon" href="#{request.contextPath}/resources/freya-layout/images/favicon.ico" type="image/x-icon"></link>
+            </f:facet>
+            <f:metadata>
+                <f:event listener="#{loginBean.verifyLogin}" type="preRenderView"/>
+            </f:metadata>
+            <title><ui:insert name="title">Fidelización de Clientes</ui:insert></title>
+            <h:outputScript name="js/layout.js" library="freya-layout" />
+            <script type="text/javascript">
+                PrimeFaces.locales['es'] = {
+                    closeText: 'Cerrar',
+                    prevText: 'Anterior',
+                    nextText: 'Siguiente',
+                    monthNames: ['Enero','Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+                    dayNames: ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'],
+                    dayNamesShort: ['Dom','Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+                    dayNamesMin: ['D','L','M','X','J','V','S'],
+                    weekHeader: 'Semana',
+                    firstDay: 1,
+                    isRTL: false,
+                    showMonthAfterYear: false,
+                    yearSuffix: '',
+                    timeOnlyTitle: 'Sólo hora',
+                    timeText: 'Tiempo',
+                    hourText: 'Hora',
+                    minuteText: 'Minuto',
+                    secondText: 'Segundo',
+                    currentText: 'Fecha actual',
+                    ampm: false,
+                    month: 'Mes',
+                    week: 'Semana',
+                    day: 'Día',
+                    allDayText : 'Todo el día'
+                };
+            </script>
+            <ui:insert name="head"/>
+        </h:head>
+
+        <h:body styleClass="ui-input-filled">
+            <div class="layout-wrapper layout-topbar-light layout-menu-light layout-sidebar">
+                <ui:include src="./topbar.xhtml"></ui:include>  
+                <ui:include src="./rightpanel.xhtml"></ui:include>  
+                <div class="layout-main"> 
+                    <div class="layout-content">
+                        <ui:insert name="content"></ui:insert>
+                    </div>
+                    <ui:include src="./footer.xhtml"></ui:include>
+                </div>
+                <p:ajaxStatus style="width:32px;height:32px;position:fixed;right:7px;bottom:7px">
+                    <f:facet name="start">
+                        <i class="pi pi-spin pi-spinner ajax-loader" aria-hidden="true"></i>
+                    </f:facet>
+                    <f:facet name="complete">
+                        <h:outputText value="" />
+                    </f:facet>
+                </p:ajaxStatus>
+                <div class="layout-mask modal-in"></div>
+            </div>
+            <h:outputStylesheet name="css/primeicons.css" library="freya-layout" />
+            <h:outputStylesheet name="css/primeflex.min.css" library="freya-layout" />
+            <h:outputStylesheet name="css/layout-light.css" library="freya-layout" />
+        </h:body>
+    </f:view>
+
+</html>

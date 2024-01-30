@@ -1,0 +1,158 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+    template="/WEB-INF/template.xhtml">
+                    
+    <ui:define name="title">Locales Comerciales</ui:define>
+    <ui:define name="head">
+        <style>
+            .table-demo .customers-table-header {
+                display: -ms-flexbox;
+                display: flex;
+                -ms-flex-align: center;
+                align-items: center;
+                -ms-flex-pack: justify;
+                justify-content: space-between;
+                -ms-flex-wrap: wrap;
+                flex-wrap: wrap;
+            }
+        </style>
+    </ui:define>
+    <ui:define name="content">
+        <h:form id="form">
+            <p:growl id="growl" life="3000" showDetail="true"/>
+            <div class="p-col-12">
+                <div class="card">
+                    <h4>Creación de Locales Comerciales</h4>
+                    <p:outputPanel id="localComercial">
+                        <div class="ui-fluid p-formgrid p-grid">
+                            <div class="p-field p-col-12">
+                                <p:outputLabel for="concesionario" value="Concesionario" />
+                                <p:autoComplete id="concesionario" value="#{localesComercialesBean.localComercial.concesionario}" placeholder="Seleccione"
+                                                dropdown="true" completeMethod="#{localesComercialesBean.autoCompleteConcesionarios}" var="concesionario" 
+                                                itemLabel="#{concesionario.razonSocial}" itemValue="#{concesionario}"
+                                                converter="#{concesionariosConverter}" scrollHeight="250" forceSelection="true" label="Concesionario" 
+                                                minQueryLength="5" inputStyle="text-transform:uppercase;" required="true"/>
+                            </div>
+                            <div class="p-field p-col-12">
+                                <p:outputLabel for="tipoLocal" value="Tipo de Local" />
+                                <p:autoComplete id="tipoLocal" value="#{localesComercialesBean.localComercial.tipoLocal}" placeholder="Seleccione"
+                                                dropdown="true" completeMethod="#{localesComercialesBean.autoCompleteTiposLocales}" var="tipoLocal" 
+                                                itemLabel="#{tipoLocal.descripcion}" itemValue="#{tipoLocal}"
+                                                converter="#{tiposLocalesConverter}" scrollHeight="250" forceSelection="true" label="Concesionario" 
+                                                minQueryLength="3" inputStyle="text-transform:uppercase;" required="true"/>
+                            </div>
+                            <div class="p-field p-col-12">
+                                <p:outputLabel for="tipoNegocio" value="Tipo de Negocio" />
+                                <p:autoComplete id="tipoNegocio" value="#{localesComercialesBean.localComercial.tipoNegocio}" placeholder="Seleccione"
+                                                dropdown="true" completeMethod="#{localesComercialesBean.autoCompleteTiposNegocios}" var="tipoNegocio" 
+                                                itemLabel="#{tipoNegocio.descripcion}" itemValue="#{tipoNegocio}"
+                                                converter="#{tiposNegociosConverter}" scrollHeight="250" forceSelection="true" label="Concesionario" 
+                                                minQueryLength="3" inputStyle="text-transform:uppercase;" required="true"/>
+                            </div>
+                            <div class="p-field p-col-12">
+                                <p:outputLabel for="ubicacion" value="Ubicación" />
+                                <p:autoComplete id="ubicacion" value="#{localesComercialesBean.localComercial.ubicacion}" placeholder="Seleccione"
+                                                dropdown="true" completeMethod="#{localesComercialesBean.autoCompleteUbicaciones}" var="ubicacion" 
+                                                itemLabel="#{ubicacion.descripcion}" itemValue="#{ubicacion}"
+                                                converter="#{ubicacionesConverter}" scrollHeight="250" forceSelection="true" label="Concesionario" 
+                                                minQueryLength="3" inputStyle="text-transform:uppercase;" required="true"/>
+                            </div>
+                            <div class="p-field p-col-12">
+                                <p:outputLabel for="nombreComercial" value="Nombre Comercial" />
+                                <p:inputText id="nombreComercial" value="#{localesComercialesBean.localComercial.nombreComercial}" label="Nombre Comercial" style="text-transform: uppercase;" required="true" maxlength="100" />
+                            </div>
+                            <div class="p-field p-col-12">
+                                <p:outputLabel for="numeroLocal" value="Número de Local" />
+                                <p:inputText id="numeroLocal" value="#{localesComercialesBean.localComercial.numeroLocal}" label="Número de Local" style="text-transform: uppercase;" maxlength="20" />
+                            </div>
+                            <div class="p-field p-col-12">
+                                <p:outputLabel for="telefono" value="Teléfono" />
+                                <p:inputMask id="telefono" value="#{localesComercialesBean.localComercial.telefono}" mask="+999 99 999 9999" validateMask="true" />
+                            </div>
+                            <div class="p-field p-col-12">
+                                <p:outputLabel for="email" value="Email" />
+                                <p:inputText id="email" value="#{localesComercialesBean.localComercial.email}" label="Email" style="text-transform: uppercase;" maxlength="50" />
+                            </div>
+                            <div class="p-field p-col-12">
+                                <p:outputLabel for="status" value="Estado" />
+                                <p:selectOneMenu id="status" value="#{localesComercialesBean.localComercial.status}" label=" Estado" required="true">
+                                    <f:selectItem itemLabel="Seleccionar" itemValue="#{null}" noSelectionOption="true"/>
+                                    <f:selectItem itemValue="A" itemLabel="Activo" />
+                                    <f:selectItem itemValue="D" itemLabel="Inactivo" />
+                                </p:selectOneMenu>
+                            </div>
+                            <div class="p-col-12">
+                                <p:commandButton id="actionGrabar" value="Grabar" action="#{localesComercialesBean.save}" rendered="#{not localesComercialesBean.editar}" process="@this,localComercial" update="localComercial,localesComerciales,growl" icon="pi pi-check" style="width:auto;"/>
+                                <p:commandButton id="actionEditar" value="Editar" action="#{localesComercialesBean.edit}" rendered="#{localesComercialesBean.editar}" process="@this,localComercial" update="localComercial,localesComerciales,growl" icon="pi pi-refresh" style="width:auto;"/>
+                            </div>
+                        </div>
+                    </p:outputPanel>
+                    <p:spacer height="10" />
+                    <div class="p-grid table-demo">
+                        <div class="p-col-12">
+                            <div class="card">
+                                <p:dataTable id="localesComerciales" value="#{localesComercialesBean.localesComerciales}" var="localComercial" 
+                                             widgetVar="localesComercialesTable" filteredValue="#{localesComercialesBean.localesComercialesFiltered}" 
+                                             selectionMode="single" selection="#{localesComercialesBean.localComercial}" rowKey="#{localComercial.id}"
+                                             reflow="true" paginator="true" rows="5" paginatorPosition="bottom"
+                                             resizableColumns="true" resizeMode="expand" draggableColumns="true">
+                                    <p:ajax event="rowSelect" listener="#{localesComercialesBean.onRowSelect}" update=":form:localComercial" />
+                                    <p:ajax event="rowUnselect" listener="#{localesComercialesBean.onRowUnselect}" update=":form:localComercial" />
+                                    <f:facet name="header">
+                                        <div class="customers-table-header">
+                                            <span style="font-weight: bold">LISTADO DE LOCALES COMERCIALES</span>
+                                            <span class="ui-input-icon-left filter-container">
+                                                <i class="pi pi-search"></i>
+                                                <p:inputText id="globalFilter" onkeyup="PF('localesComercialesTable').filter()" placeholder="Búsqueda por Nombre Comercial" style="width:350px; text-transform: uppercase;"/>
+                                            </span>
+                                        </div>
+                                        <p:spacer height="10" />
+                                        <div style="text-align: right;">
+                                            <p:commandButton id="toggler" type="button" value="Mostrar u ocultar columnas" icon="pi pi-align-justify"/>
+                                            <p:columnToggler datasource="localesComerciales" trigger="toggler"/>
+                                        </div>
+                                    </f:facet>
+                                    <p:column headerText="Código" sortBy="#{localComercial.id}">
+                                        <h:outputText value="#{localComercial.id}" />
+                                    </p:column>
+                                    <p:column headerText="Concesionario" sortBy="#{localComercial.concesionario.razonSocial}" style="width: 22%;">
+                                        <h:outputText value="#{localComercial.concesionario.razonSocial}" />
+                                    </p:column>
+                                    <p:column headerText="Tipo de Local" sortBy="#{localComercial.tipoLocal.descripcion}">
+                                        <h:outputText value="#{localComercial.tipoLocal.descripcion}" />
+                                    </p:column>
+                                    <p:column headerText="Tipo de Negocio" sortBy="#{localComercial.tipoNegocio.descripcion}">
+                                        <h:outputText value="#{localComercial.tipoNegocio.descripcion}" />
+                                    </p:column>
+                                    <p:column headerText="Ubicación" sortBy="#{localComercial.ubicacion.descripcion}">
+                                        <h:outputText value="#{localComercial.ubicacion.descripcion}" />
+                                    </p:column>
+                                    <p:column headerText="Nombre Comercial" sortBy="#{localComercial.nombreComercial}" filterBy="#{localComercial.nombreComercial}" filterStyle="display:none" style="width: 22%;">
+                                        <h:outputText value="#{localComercial.nombreComercial}" />
+                                    </p:column>
+                                    <p:column headerText="Número de Local" sortBy="#{localComercial.numeroLocal}">
+                                        <h:outputText value="#{localComercial.numeroLocal}" />
+                                    </p:column>
+                                    <p:column headerText="Teléfono" sortBy="#{localComercial.telefono}">
+                                        <h:outputText value="#{localComercial.telefono}" />
+                                    </p:column>
+                                    <p:column headerText="Email" sortBy="#{localComercial.email}">
+                                        <h:outputText value="#{localComercial.email}" />
+                                    </p:column>
+                                    <p:column headerText="Estado" sortBy="#{localComercial.status}">
+                                        <h:outputText value="#{localComercial.status eq 'A' ? 'Activo': 'Inactivo'}" />
+                                    </p:column>
+                                </p:dataTable>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+    </ui:define>
+    
+</ui:composition>
+

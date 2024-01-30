@@ -1,0 +1,96 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+    template="/WEB-INF/template.xhtml">
+                    
+    <ui:define name="title">Canje de Cupones</ui:define>
+    <ui:define name="content">
+        <h:form id="form">
+            <p:growl id="growl" life="3000" showDetail="true"/>
+            <div class="p-grid ui-fluid">
+                <div class="p-col-12">
+                    <div class="card">
+                        <h4>Canje de Cupones</h4>
+                        <div class="ui-fluid p-formgrid p-grid">
+                            <div class="p-field p-col-12">
+                                <p:outputLabel for="cupon" value="Código" />
+                                <div class="p-field">
+                                    <div class="ui-inputgroup">
+                                        <p:inputText id="cupon" value="#{canjesCuponesBean.promocionDetalle.codigo}" required="true" style="text-transform: uppercase;" />
+                                        <p:commandButton id="busqueda" action="#{canjesCuponesBean.searchByCodigo}" icon="pi pi-search"  process="@this,cupon" update="@form"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-field p-col-12 p-md-6">
+                                <div class="p-field">
+                                    <p:outputLabel for="identificacion" value="Identificación" />
+                                    <p:inputText id="identificacion" value="#{canjesCuponesBean.promocionDetalle.cliente.identificacion}" disabled="true">
+                                        <p:keyFilter mask="num" />
+                                    </p:inputText>
+                                </div>
+                            </div>
+                            <div class="p-field p-col-12 p-md-6">
+                                <div class="p-field">
+                                    <p:outputLabel for="razonSocial" value="Razón Social" />
+                                    <p:inputText id="razonSocial" value="#{canjesCuponesBean.promocionDetalle.cliente.razonSocial}" style="text-transform: uppercase;" disabled="true" />
+                                </div>
+                            </div>
+                            <div class="p-field p-col-12 p-md-6">
+                                <div class="p-field">
+                                    <p:outputLabel for="telefono" value="Teléfono" />
+                                    <p:inputMask id="telefono" value="#{canjesCuponesBean.promocionDetalle.cliente.telefono}" mask="+999 99 999 9999" validateMask="true" disabled="true" />
+                                </div>
+                            </div>
+                            <div class="p-field p-col-12 p-md-6">
+                                <div class="p-field">
+                                    <p:outputLabel for="email" value="Email" />
+                                    <p:inputText id="email" value="#{canjesCuponesBean.promocionDetalle.cliente.email}"  style="text-transform: lowercase;" disabled="true" />
+                                </div>
+                            </div>
+                            <div class="p-col-12">
+                                <p:dataTable id="ventas" value="#{canjesCuponesBean.ventas}" var="venta" reflow="true" paginator="true" rows="5" paginatorPosition="bottom" rendered="#{canjesCuponesBean.canjeaCodigo}">
+                                    <f:facet name="header">
+                                        <span style="font-weight: bold; text-align: center;">DETALLES DE VIAJES POR CUPON</span>
+                                    </f:facet>
+                                    <p:column headerText="Localidad" sortBy="#{venta.localidad.descripcion}">
+                                        <h:outputText value="#{venta.localidad.descripcion}" />
+                                    </p:column>
+                                    <p:column headerText="Cooperativa" sortBy="#{venta.cooperativa.razonSocial}">
+                                        <h:outputText value="#{venta.cooperativa.razonSocial}" />
+                                    </p:column>
+                                    <p:column headerText="Destino" sortBy="#{venta.destino.descripcion}">
+                                        <h:outputText value="#{venta.destino.descripcion}" />
+                                    </p:column>
+                                    <p:column headerText="Fecha de Salida" sortBy="#{venta.fechaSalida}">
+                                        <h:outputText value="#{venta.fechaSalida}">
+                                            <f:convertDateTime type="localDate" pattern="dd/MM/yyyy" />
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column headerText="Valor" sortBy="#{venta.precioTotal}">
+                                        <h:outputText value="#{venta.precioTotal}" style="font-weight: 700">
+                                            <f:convertNumber currencySymbol="$" type="currency" />
+                                        </h:outputText>
+                                    </p:column>
+                                </p:dataTable>
+                            </div>
+                            <div class="p-col-12">
+                                <p:commandButton value="Imprimir" action="#{canjesCuponesBean.canjearCupon}" rendered="#{canjesCuponesBean.canjeaCodigo}" oncomplete="PF('cuponDialog').show()" update="@form" />
+                            </div>
+                            <p:dialog header="Cupón" id="cuponDialog" widgetVar="cuponDialog" modal="true" responsive="true" showEffect="fade" hideEffect="fade">
+                                <p:media value="#{mediaBean.cupon}" width="100%" height="440px" player="pdf">
+                                    <f:param name="promocionDetalle" value="#{canjesCuponesBean.promocionDetalle.id}"/>
+                                </p:media>
+                                <f:facet name="footer">
+                                    <p:commandButton value="Cerrar" action="#{canjesCuponesBean.closePopup}" styleClass="primary-button text-button" oncomplete="PF('cuponDialog').hide()" process="@this,cuponDialog" update="@form" />
+                                </f:facet>
+                            </p:dialog>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+    </ui:define>
+    
+</ui:composition>

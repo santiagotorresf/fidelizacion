@@ -1,0 +1,59 @@
+<pretty-config xmlns="http://ocpsoft.org/schema/rewrite-config-prettyfaces" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:schemaLocation="http://ocpsoft.org/schema/rewrite-config-prettyfaces
+                      http://ocpsoft.org/xml/ns/prettyfaces/rewrite-config-prettyfaces.xsd">
+    
+    <url-mapping id="index">
+        <pattern value="/" />
+        <view-id value="/dashboard.jsf" />
+    </url-mapping>
+    <url-mapping id="dashboard">
+        <pattern value="/dashboard" />
+        <view-id value="/dashboard.jsf" />
+    </url-mapping>
+    <url-mapping id="login">
+        <pattern value="/static/login" />
+        <view-id value="/static/login.jsf" />
+    </url-mapping>
+    <url-mapping id="tipos-locales">
+        <pattern value="/mantenimientos/tipos-locales" />
+        <view-id value="/mantenimientos/tipos-locales.jsf" />
+    </url-mapping>
+    <url-mapping id="tipos-clientes">
+        <pattern value="/mantenimientos/tipos-clientes" />
+        <view-id value="/mantenimientos/tipos-clientes.jsf" />
+    </url-mapping>
+    <url-mapping id="tipos-negocios">
+        <pattern value="/mantenimientos/tipos-negocios" />
+        <view-id value="/mantenimientos/tipos-negocios.jsf" />
+    </url-mapping>
+    <url-mapping id="ubicaciones">
+        <pattern value="/mantenimientos/ubicaciones" />
+        <view-id value="/mantenimientos/ubicaciones.jsf" />
+    </url-mapping>
+    <url-mapping id="concesionarios">
+        <pattern value="/mantenimientos/concesionarios" />
+        <view-id value="/mantenimientos/concesionarios.jsf" />
+    </url-mapping>
+    <url-mapping id="locales-comerciales">
+        <pattern value="/mantenimientos/locales-comerciales" />
+        <view-id value="/mantenimientos/locales-comerciales.jsf" />
+    </url-mapping>
+    <url-mapping id="actualizacion-clientes">
+        <pattern value="/procesos/actualizacion-clientes" />
+        <view-id value="/procesos/actualizacion-clientes.jsf" />
+    </url-mapping>
+    <url-mapping id="canje-cupones">
+        <pattern value="/procesos/canje-cupones" />
+        <view-id value="/procesos/canje-cupones.jsf" />
+    </url-mapping>
+    <url-mapping id="canje-cupones-sorteo">
+        <pattern value="/procesos/canje-cupones-sorteo" />
+        <view-id value="/procesos/canje-cupones-sorteo.jsf" />
+    </url-mapping>
+    <url-mapping id="test">
+        <pattern value="/procesos/test" />
+        <view-id value="/procesos/test.jsf" />
+    </url-mapping>
+    
+</pretty-config>
